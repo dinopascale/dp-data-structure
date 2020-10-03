@@ -11,7 +11,9 @@
   "scripts": {
     "test": "jest --coverage",
     "build": "rollup -c",
-    "watch": "rollup -cw"
+    "watch": "rollup -cw",
+    "lint": "npx rome check src/",
+    "lint:fix": "npx rome check src/ --apply"
   },
   "keywords": [
     "data-structure"
@@ -25,5 +27,8 @@
     "rollup-plugin-typescript2": "^0.27.3",
     "ts-jest": "^26.4.1",
     "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "rome": "^10.0.4-beta"
   }
 }

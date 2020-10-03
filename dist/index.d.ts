@@ -1,2 +1,2 @@
-export declare const sum: (a: number, b: number) => number;
-export declare const multiply: (a: number, b: number) => number;
+export declare function sum(a: number, b: number): number;
+export declare function multiply(a: number, b: number): number;

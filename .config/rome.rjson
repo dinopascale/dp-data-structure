@@ -1,0 +1,10 @@
+// For configuration documentation see http://romefrontend.dev/#project-configuration
+name: "data-structure"
+lint: {
+	ignore: [
+		"src/__tests__/"
+		"dist"
+		"coverage"
+]
+}
+root: true
