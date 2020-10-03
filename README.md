@@ -8,3 +8,4 @@ So far I used:
 
 - Typescript: because I love it :heart: !
 - Rollup: Testing for the first time instead of Webpack. Pretty nice so far :thumbsup: 
+- Jest: just to change from jasmine that I use at work :flamingo: 
