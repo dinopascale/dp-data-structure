@@ -1,0 +1,14 @@
+{
+  "name": "dp-data-structure",
+  "version": "1.0.0",
+  "description": "A personal project to learn data structure",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "data-structure"
+  ],
+  "author": "Dino Pascale",
+  "license": "ISC"
+}
