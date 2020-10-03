@@ -10,5 +10,10 @@
     "data-structure"
   ],
   "author": "Dino Pascale",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^2.28.2",
+    "rollup-plugin-typescript2": "^0.27.3",
+    "typescript": "^4.0.3"
+  }
 }
