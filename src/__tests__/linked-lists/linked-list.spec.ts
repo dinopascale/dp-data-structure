@@ -51,10 +51,16 @@ describe('Linked List', () => {
         expect(ll.indexOf(33)).toBe(1);
     })
 
-    test('remove should remove target element', () => {
+    test('remove should remove target element by passing data', () => {
+        ll.add(22);
         ll.add(45);
         ll.add(72);
         ll.add(33);
+        expect(ll.remove(33)).toBe(true);
+        expect(ll.size).toBe(3);
+        expect(ll.peekLast()).toBe(72);
+        expect(ll.remove(22)).toBe(true);
+        expect(ll.peekFirst()).toBe(45);
     })
 
     test('Should print elements in order', () => {

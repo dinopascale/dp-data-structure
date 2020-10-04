@@ -109,10 +109,10 @@ export class LinkedList<T> implements IterableIterator<T> {
         if (this.isEmpty()) {
             throw new LinkedListErrors('Empty List!')
         }
-        if (node.next === this.tail) {
+        if (node.next === null) {
             return this.removeLast();
         }
-        if (this.head.next === node) {
+        if (this.head === node) {
             return this.removeFirst();
         }
         let temp: Node<T> = this.head;
@@ -121,8 +121,9 @@ export class LinkedList<T> implements IterableIterator<T> {
         }
 
         if (temp.next != null) {
-            temp.next = temp.next.next;
             const removed = temp.next.data;
+            console.log(removed);
+            temp.next = temp.next.next;
             node.data = null;
             node = node.next = null;
             this._size--;
