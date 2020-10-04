@@ -26,6 +26,7 @@ var LinkedList = /** @class */ (function () {
         this._size = 0;
         this.head = null;
         this.tail = null;
+        this.pointer = null;
     }
     Object.defineProperty(LinkedList.prototype, "size", {
         get: function () {
@@ -49,15 +50,52 @@ var LinkedList = /** @class */ (function () {
         return this.size === 0;
     };
     LinkedList.prototype.add = function (element) {
-        var temp = new Node(element, null);
+        this.addLast(element);
+    };
+    LinkedList.prototype.addLast = function (element) {
         if (this.isEmpty()) {
-            this.head = this.tail = temp;
+            this.head = this.tail = new Node(element, null);
         }
         else {
-            this.tail.next = temp;
-            this.tail = temp;
+            this.tail.next = new Node(element, null);
+            this.tail = this.tail.next;
         }
         this._size++;
+    };
+    LinkedList.prototype.addFirst = function (element) {
+        if (this.isEmpty()) {
+            this.head = this.tail = new Node(element, null);
+        }
+        else {
+            this.head = new Node(element, this.head);
+        }
+        this._size++;
+    };
+    LinkedList.prototype.toString = function () {
+        var string = '[ ';
+        var trav = this.head;
+        while (trav != null) {
+            string += trav.next != null ? trav.data + ", " : "" + trav.data;
+            trav = trav.next;
+        }
+        string += ' ]';
+        return string.toString();
+    };
+    LinkedList.prototype[Symbol.iterator] = function () {
+        this.pointer = this.head;
+        return this;
+    };
+    LinkedList.prototype.next = function () {
+        var result;
+        if (this.pointer != null) {
+            result = { value: this.pointer.data, done: false };
+            this.pointer = this.pointer.next;
+        }
+        else {
+            result = { value: null, done: true };
+            this.pointer = null;
+        }
+        return result;
     };
     return LinkedList;
 }());
