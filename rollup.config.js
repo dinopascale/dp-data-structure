@@ -1,4 +1,5 @@
 import typescript from "rollup-plugin-typescript2";
+import nodeResolve from "@rollup/plugin-node-resolve";
 
 import pkg from './package.json';
 
@@ -7,11 +8,11 @@ export default {
     output: [
         {
             file: pkg.main,
-            format: 'cjs'
+            format: 'cjs',
         },
         {
             file: pkg.module,
-            format: 'es'
+            format: 'es',
         }
     ],
     external: [
@@ -19,6 +20,7 @@ export default {
         ...Object.keys(pkg.peerDependecies || {})
     ],
     plugins: [
+        nodeResolve(),
         typescript({
             typescript: require('typescript')
         })

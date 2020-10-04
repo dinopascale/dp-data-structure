@@ -44,6 +44,19 @@ describe('Linked List', () => {
         expect(ll.isEmpty()).toBe(true);
     })
 
+    test('indexOf should return index by passing data', () => {
+        ll.add(22);
+        ll.add(33);
+        ll.add(76);
+        expect(ll.indexOf(33)).toBe(1);
+    })
+
+    test('remove should remove target element', () => {
+        ll.add(45);
+        ll.add(72);
+        ll.add(33);
+    })
+
     test('Should print elements in order', () => {
         ll.add(42);
         ll.add(50);

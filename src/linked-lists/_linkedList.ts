@@ -1,5 +1,6 @@
 import {Node} from "./_node";
 import {LinkedListErrors} from './_errors';
+import isEqual from 'lodash-es/isEqual';
 
 export class LinkedList<T> implements IterableIterator<T> {
     private _size: number = 0;
@@ -102,6 +103,90 @@ export class LinkedList<T> implements IterableIterator<T> {
             }
             return removed;
         }
+    }
+
+    private _remove(node: Node<T>): T {
+        if (this.isEmpty()) {
+            throw new LinkedListErrors('Empty List!')
+        }
+        if (node.next === this.tail) {
+            return this.removeLast();
+        }
+        if (this.head.next === node) {
+            return this.removeFirst();
+        }
+        let temp: Node<T> = this.head;
+        while (temp.next != null && temp.next !== node) {
+            temp = temp.next;
+        }
+
+        if (temp.next != null) {
+            temp.next = temp.next.next;
+            const removed = temp.next.data;
+            node.data = null;
+            node = node.next = null;
+            this._size--;
+            return removed;
+        } else {
+            return;
+        }
+    }
+
+    public removeAt(index: number): T {
+        if (index < 0 || index >= this.size) {
+            throw new LinkedListErrors('Illegal index passed as argument!')
+        }
+        let trav: Node<T>;
+        let i: number;
+        for (i = 0, trav = this.head; i !== index; i++) {
+            trav = trav.next
+        }
+        return this._remove(trav);
+    }
+
+    public remove(obj: T): boolean {
+        let trav: Node<T>
+
+        if (obj == null) {
+            for (trav = this.head; trav != null; trav = trav.next) {
+                if (trav.data == null) {
+                    this._remove(trav);
+                    return true;
+                }
+            }
+        } else {
+            for (trav = this.head; trav != null; trav = trav.next) {
+                if (isEqual(trav.data, obj)) {
+                    this._remove(trav);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public indexOf(obj: T): number {
+        let index = 0;
+        let trav: Node<T> = this.head;
+
+        if (obj == null) {
+            for(; trav != null; trav = trav.next, index++) {
+                if (trav.data == null) {
+                    return index;
+                }
+            }
+        } else {
+            for(; trav != null; trav = trav.next, index++) {
+                if (isEqual(trav.data, obj)) {
+                    return index;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public contains(obj: T): boolean {
+        return this.indexOf(obj) !== -1;
     }
 
     public toString(): string {

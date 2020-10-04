@@ -4,6 +4,7 @@
 		"declarationDir": "./dist",
 		"esModuleInterop": true,
 		"module": "es6",
+		"allowJs": true,
 		"noImplicitAny": true,
 		"outDir": "./dist",
 		"target": "es5"
