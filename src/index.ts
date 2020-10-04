@@ -1,6 +1,1 @@
-export function sum(a: number, b: number): number {
-	return a + b;
-}
-export function multiply(a: number, b: number): number {
-	return a * b;
-}
+export {LinkedList} from './linked-lists/_linkedList';
