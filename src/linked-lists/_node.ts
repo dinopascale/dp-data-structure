@@ -8,10 +8,13 @@ export class Node<T> {
     }
 }
 
-/*
-export class DoubleLinkedNode<T> extends Node<T> {
-    constructor(data: T, next: Node<T>, public prev: Node<T>) {
-        super(data, next);
+
+export class DoublyLinkedNode<T> {
+    constructor(public data: T, public next: DoublyLinkedNode<T>, public prev: DoublyLinkedNode<T>) {
+    }
+
+    public toString(): string {
+        return this.data.toString();
     }
 }
-*/
+
