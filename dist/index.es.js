@@ -9,13 +9,6 @@ var Node = /** @class */ (function () {
     };
     return Node;
 }());
-/*
-export class DoubleLinkedNode<T> extends Node<T> {
-    constructor(data: T, next: Node<T>, public prev: Node<T>) {
-        super(data, next);
-    }
-}
-*/
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -50,7 +43,7 @@ var LinkedListErrors = /** @class */ (function (_super) {
     __extends(LinkedListErrors, _super);
     function LinkedListErrors(message) {
         var _this = _super.call(this, message) || this;
-        _this.name = 'LinkedListError';
+        _this.name = "LinkedListError";
         return _this;
     }
     return LinkedListErrors;
@@ -2123,7 +2116,7 @@ var LinkedList = /** @class */ (function () {
     };
     LinkedList.prototype.peekFirst = function () {
         if (this.isEmpty()) {
-            throw new Error('Empty List!');
+            throw new Error("Empty List!");
         }
         else {
             return this.head.data;
@@ -2131,7 +2124,7 @@ var LinkedList = /** @class */ (function () {
     };
     LinkedList.prototype.peekLast = function () {
         if (this.isEmpty()) {
-            throw new LinkedListErrors('Empty List!');
+            throw new LinkedListErrors("Empty List!");
         }
         else {
             return this.tail.data;
@@ -2139,7 +2132,7 @@ var LinkedList = /** @class */ (function () {
     };
     LinkedList.prototype.removeFirst = function () {
         if (this.isEmpty()) {
-            throw new LinkedListErrors('Empty List!');
+            throw new LinkedListErrors("Empty List!");
         }
         else {
             var removed = this.head.data;
@@ -2153,7 +2146,7 @@ var LinkedList = /** @class */ (function () {
     };
     LinkedList.prototype.removeLast = function () {
         if (this.isEmpty()) {
-            throw new LinkedListErrors('Empty List!');
+            throw new LinkedListErrors("Empty List!");
         }
         else {
             var temp = this.head;
@@ -2175,12 +2168,12 @@ var LinkedList = /** @class */ (function () {
     };
     LinkedList.prototype._remove = function (node) {
         if (this.isEmpty()) {
-            throw new LinkedListErrors('Empty List!');
+            throw new LinkedListErrors("Empty List!");
         }
-        if (node.next === this.tail) {
+        if (node.next === null) {
             return this.removeLast();
         }
-        if (this.head.next === node) {
+        if (this.head === node) {
             return this.removeFirst();
         }
         var temp = this.head;
@@ -2188,8 +2181,9 @@ var LinkedList = /** @class */ (function () {
             temp = temp.next;
         }
         if (temp.next != null) {
-            temp.next = temp.next.next;
             var removed = temp.next.data;
+            console.log(removed);
+            temp.next = temp.next.next;
             node.data = null;
             node = node.next = null;
             this._size--;
@@ -2201,7 +2195,7 @@ var LinkedList = /** @class */ (function () {
     };
     LinkedList.prototype.removeAt = function (index) {
         if (index < 0 || index >= this.size) {
-            throw new LinkedListErrors('Illegal index passed as argument!');
+            throw new LinkedListErrors("Illegal index passed as argument!");
         }
         var trav;
         var i;
@@ -2253,13 +2247,14 @@ var LinkedList = /** @class */ (function () {
         return this.indexOf(obj) !== -1;
     };
     LinkedList.prototype.toString = function () {
-        var string = '[ ';
+        var string = "[ ";
         var trav = this.head;
         while (trav != null) {
-            string += trav.next != null ? trav.data + ", " : "" + trav.data;
+            var data = JSON.stringify(trav.data);
+            string += trav.next != null ? data + ", " : "" + data;
             trav = trav.next;
         }
-        string += ' ]';
+        string += " ]";
         return string.toString();
     };
     LinkedList.prototype[Symbol.iterator] = function () {

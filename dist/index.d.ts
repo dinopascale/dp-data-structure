@@ -1,1 +1,1 @@
-export { LinkedList } from './linked-lists/_linkedList';
+export { LinkedList } from "./linked-lists/_linkedList";

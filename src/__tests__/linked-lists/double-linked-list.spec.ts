@@ -75,4 +75,30 @@ describe('Double Linked List', () => {
         expect(dll.size).toBe(3);
     })
 
+    test('indexOf: should return index of element', () => {
+        dll.add({foo: 'salve', bar: 10});
+        dll.add({foo: 'bonjour', bar: 20});
+        dll.add({foo: 'ola', bar: 40});
+        dll.add(null);
+        expect(dll.indexOf({foo: 'ola', bar: 40})).toBe(2)
+        expect(dll.indexOf(null)).toBe(3);
+        expect(dll.indexOf({foo: 'hey', bar: 10})).toBe(-1);
+    })
+
+    test('contains: should return true if element passed is present', () => {
+        dll.add({foo: 'salve', bar: 10});
+        dll.add({foo: 'bonjour', bar: 20});
+        dll.add({foo: 'ola', bar: 40});
+        dll.add(null);
+        expect(dll.contains({foo: 'ola', bar: 40})).toBe(true)
+        expect(dll.contains(null)).toBe(true);
+        expect(dll.contains({foo: 'hey', bar: 10})).toBe(false);
+    })
+
+    test('toString: should return string representation of data', () => {
+        dll.add({foo: 'salve', bar: 10});
+        dll.add(null);
+        expect(dll.toString()).toBe('[ {"foo":"salve","bar":10}, null ]')
+    })
+
 })
