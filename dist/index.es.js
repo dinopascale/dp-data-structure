@@ -2454,4 +2454,47 @@ class DoublyLinkedList {
     }
 }
 
-export { DoublyLinkedList, LinkedList };
+class StackError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "StackError";
+    }
+}
+
+class Stack$1 {
+    constructor(firstElement) {
+        this._list = new DoublyLinkedList();
+        if (firstElement) {
+            this.push(firstElement);
+        }
+    }
+    size() {
+        return this._list.size;
+    }
+    isEmpty() {
+        return this._list.isEmpty();
+    }
+    push(element) {
+        this._list.addLast(element);
+    }
+    pop() {
+        if (this.isEmpty()) {
+            throw new StackError('Empty Stack!');
+        }
+        return this._list.removeLast();
+    }
+    peek() {
+        if (this.isEmpty()) {
+            throw new StackError('Empty Stack!');
+        }
+        return this._list.peekLast();
+    }
+    [Symbol.iterator]() {
+        return this._list[Symbol.iterator]();
+    }
+    next() {
+        return this._list.next();
+    }
+}
+
+export { DoublyLinkedList, LinkedList, Stack$1 as Stack };
