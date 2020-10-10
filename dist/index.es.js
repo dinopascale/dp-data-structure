@@ -9,6 +9,17 @@ var Node = /** @class */ (function () {
     };
     return Node;
 }());
+var DoublyLinkedNode = /** @class */ (function () {
+    function DoublyLinkedNode(data, next, prev) {
+        this.data = data;
+        this.next = next;
+        this.prev = prev;
+    }
+    DoublyLinkedNode.prototype.toString = function () {
+        return this.data.toString();
+    };
+    return DoublyLinkedNode;
+}());
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -2276,4 +2287,215 @@ var LinkedList = /** @class */ (function () {
     return LinkedList;
 }());
 
-export { LinkedList };
+var DoublyLinkedList = /** @class */ (function () {
+    function DoublyLinkedList() {
+        this._size = 0;
+        this.head = null;
+        this.tail = null;
+        this.pointer = null;
+    }
+    Object.defineProperty(DoublyLinkedList.prototype, "size", {
+        get: function () {
+            return this._size;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    DoublyLinkedList.prototype.clear = function () {
+        var trav = this.head;
+        while (trav != null) {
+            var next = trav.next;
+            trav.next = null;
+            trav.data = null;
+            trav = next;
+        }
+        this.head = this.tail = trav = null;
+        this._size = 0;
+    };
+    DoublyLinkedList.prototype.isEmpty = function () {
+        return this.size === 0;
+    };
+    DoublyLinkedList.prototype.add = function (element) {
+        this.addLast(element);
+    };
+    DoublyLinkedList.prototype.addLast = function (element) {
+        if (this.isEmpty()) {
+            this.head = this.tail = new DoublyLinkedNode(element, null, null);
+        }
+        else {
+            this.tail.next = new DoublyLinkedNode(element, null, this.tail);
+            this.tail = this.tail.next;
+        }
+        this._size++;
+    };
+    DoublyLinkedList.prototype.addFirst = function (element) {
+        if (this.isEmpty()) {
+            this.head = this.tail = new DoublyLinkedNode(element, null, null);
+        }
+        else {
+            var prevHead = this.head;
+            this.head = new DoublyLinkedNode(element, this.head, null);
+            prevHead.prev = this.head;
+        }
+        this._size++;
+    };
+    DoublyLinkedList.prototype.peekFirst = function () {
+        if (this.isEmpty()) {
+            throw new LinkedListErrors("Empty List!");
+        }
+        else {
+            return this.head.data;
+        }
+    };
+    DoublyLinkedList.prototype.peekLast = function () {
+        if (this.isEmpty()) {
+            throw new LinkedListErrors("Empty List!");
+        }
+        else {
+            return this.tail.data;
+        }
+    };
+    DoublyLinkedList.prototype.removeFirst = function () {
+        if (this.isEmpty()) {
+            throw new LinkedListErrors("Empty List!");
+        }
+        else {
+            var removed = this.head.data;
+            this.head = this.head.next;
+            this.head.prev = null;
+            this._size--;
+            if (this.isEmpty()) {
+                this.tail = null;
+            }
+            return removed;
+        }
+    };
+    DoublyLinkedList.prototype.removeLast = function () {
+        if (this.isEmpty()) {
+            throw new LinkedListErrors("Empty List!");
+        }
+        else {
+            var removed = this.tail.data;
+            this.tail = this.tail.prev;
+            this._size--;
+            if (this.isEmpty()) {
+                this.head = null;
+            }
+            else {
+                this.tail.next = null;
+            }
+            return removed;
+        }
+    };
+    DoublyLinkedList.prototype._remove = function (node) {
+        if (this.isEmpty()) {
+            throw new LinkedListErrors("Empty List!");
+        }
+        if (node.next === null) {
+            return this.removeLast();
+        }
+        if (node.prev === null) {
+            return this.removeFirst();
+        }
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+        var removed = node.data;
+        node.data = null;
+        node = node.prev = node.next = null;
+        this._size--;
+        return removed;
+    };
+    DoublyLinkedList.prototype.removeAt = function (index) {
+        if (this.isEmpty()) {
+            throw new LinkedListErrors("Empty List!");
+        }
+        if (index < 0 || index >= this.size) {
+            throw new LinkedListErrors("Illegal index passed as argument!");
+        }
+        var i;
+        var trav;
+        if (index < this.size / 2) {
+            for (i = 0, trav = this.head; i !== index; i++) {
+                trav = trav.next;
+            }
+        }
+        else {
+            for (i = this.size - 1, trav = this.tail; i !== index; i--) {
+                trav = trav.prev;
+            }
+        }
+        return this._remove(trav);
+    };
+    DoublyLinkedList.prototype.remove = function (obj) {
+        var trav;
+        if (obj == null) {
+            for (trav = this.head; trav != null; trav = trav.next) {
+                if (trav.data == null) {
+                    this._remove(trav);
+                    return true;
+                }
+            }
+        }
+        else {
+            for (trav = this.head; trav != null; trav = trav.next) {
+                if (isEqual(trav.data, obj)) {
+                    this._remove(trav);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    DoublyLinkedList.prototype.indexOf = function (obj) {
+        var index = 0;
+        var trav = this.head;
+        if (obj == null) {
+            for (; trav != null; trav = trav.next, index++) {
+                if (trav.data == null) {
+                    return index;
+                }
+            }
+        }
+        else {
+            for (; trav != null; trav = trav.next, index++) {
+                if (isEqual(trav.data, obj)) {
+                    return index;
+                }
+            }
+        }
+        return -1;
+    };
+    DoublyLinkedList.prototype.contains = function (obj) {
+        return this.indexOf(obj) !== -1;
+    };
+    DoublyLinkedList.prototype.toString = function () {
+        var string = "[ ";
+        var trav = this.head;
+        while (trav != null) {
+            var data = JSON.stringify(trav.data);
+            string += trav.next != null ? data + ", " : "" + data;
+            trav = trav.next;
+        }
+        string += " ]";
+        return string.toString();
+    };
+    DoublyLinkedList.prototype[Symbol.iterator] = function () {
+        this.pointer = this.head;
+        return this;
+    };
+    DoublyLinkedList.prototype.next = function () {
+        var result;
+        if (this.pointer != null) {
+            result = { value: this.pointer.data, done: false };
+            this.pointer = this.pointer.next;
+        }
+        else {
+            result = { value: null, done: true };
+            this.pointer = null;
+        }
+        return result;
+    };
+    return DoublyLinkedList;
+}());
+
+export { DoublyLinkedList, LinkedList };
