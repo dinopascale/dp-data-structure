@@ -7,7 +7,7 @@
 		"allowJs": true,
 		"noImplicitAny": true,
 		"outDir": "./dist",
-		"target": "es5"
+		"target": "es2015"
 	},
 	"include": [
 		"src/**/*"
