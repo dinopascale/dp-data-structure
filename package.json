@@ -1,6 +1,6 @@
 {
   "name": "dp-data-structure",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "A personal project to learn data structure",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
