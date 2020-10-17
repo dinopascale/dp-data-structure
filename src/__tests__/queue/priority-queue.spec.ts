@@ -70,4 +70,22 @@ describe('Priority Queue', () => {
         expect(pq.contains(notPresent)).toBe(false);
         expect(pq.contains(comparableMockData[1])).toBe(true);
     })
+
+    test('add: should add new element in right order in the heap', () => {
+        let pq = new PriorityQueue<data>(comparableMockData);
+        const toAdd = mockDataHelper({id: 34, name: 'A', surname: 'B'});
+        pq.add(toAdd);
+        expect(pq.size()).toBe(comparableMockData.length + 1);
+        expect(pq.isMinHeap(0)).toBe(true);
+        expect(() => pq.add(null)).toThrow('You cannot pass null as argument')
+    })
+
+    test('remove: should remove element from heap and return boolean', () => {
+        let pq = new PriorityQueue<data>(comparableMockData);
+        const toRemove = comparableMockData[3];
+        expect(pq.remove(toRemove)).toBe(true);
+        expect(pq.size()).toBe(comparableMockData.length - 1);
+        expect(pq.remove(null)).toBe(false);
+        expect(pq.size()).toBe(comparableMockData.length - 1);
+    })
 })
