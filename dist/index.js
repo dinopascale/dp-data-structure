@@ -2,8 +2,6 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var lodashEs = require('lodash-es');
-
 // rome-ignore lint/js/noUnusedVariables
 class Node {
     constructor(data, next) {
@@ -2628,16 +2626,16 @@ class TreeSet {
         return this._list.splice(0, 1)[0];
     }
     remove(obj) {
-        if (lodashEs.isEqual(this._list[0], obj)) {
+        if (isEqual(this._list[0], obj)) {
             this.removeFirst();
             return true;
         }
-        if (lodashEs.isEqual(this._list[this._length - 1], obj)) {
+        if (isEqual(this._list[this._length - 1], obj)) {
             this.removeLast();
             return true;
         }
         for (let i = 0; i < this._length - 1; i++) {
-            if (lodashEs.isEqual(obj, this._list[i])) {
+            if (isEqual(obj, this._list[i])) {
                 this._list.splice(i, 1);
                 return true;
             }
@@ -2658,7 +2656,7 @@ class TreeSet {
     }
     contains(obj, comparer) {
         for (let i = 0; i < this._length - 1; i++) {
-            if (comparer ? comparer(this._list[i]) : lodashEs.isEqual(obj, this._list[i])) {
+            if (comparer ? comparer(this._list[i]) : isEqual(obj, this._list[i])) {
                 return true;
             }
         }
@@ -2860,7 +2858,7 @@ class PriorityQueue {
         let element = this.heap[i];
         // we try sinking
         this.sink(i);
-        if (lodashEs.isEqual(this.heap[i], element)) {
+        if (isEqual(this.heap[i], element)) {
             this.swim(i);
         }
         return removedData;

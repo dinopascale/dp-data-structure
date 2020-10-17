@@ -1,5 +1,5 @@
 import {IntTreeSet} from '../shared/_treeSet';
-import {isEqual} from 'lodash-es';
+import isEqual from "lodash-es/isEqual";
 
 // interface for not primitives that can be added to priority queue
 export interface Comparable<T> {

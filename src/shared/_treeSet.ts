@@ -3,7 +3,7 @@
  * - unique values
  * - always sorted in ascending order
  */
-import {isEqual} from 'lodash-es';
+import isEqual from "lodash-es/isEqual";
 
 export class TreeSet<T> implements IterableIterator<T> {
 
