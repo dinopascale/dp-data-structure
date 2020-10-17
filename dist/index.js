@@ -2501,6 +2501,86 @@ class Stack$1 {
     }
 }
 
+class StaticQueueError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'StaticQueueError';
+    }
+}
+class QueueError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'QueueError';
+    }
+}
+
+class StaticQueue {
+    constructor(maxSize) {
+        this._front = this._end = 0;
+        this._size = maxSize + 1;
+        this._sealed = Object.seal(Array(this._size).fill(null));
+    }
+    isEmpty() {
+        return this._front === this._end;
+    }
+    size() {
+        return this._front > this._end ? this._end + this._size - this._front : this._end - this._front;
+    }
+    peek() {
+        return this._sealed[this._front];
+    }
+    enqueue(element) {
+        this._sealed[this._end] = element;
+        if (++this._end == this._size) {
+            this._end = 0;
+        }
+        if (this._end == this._front) {
+            throw new StaticQueueError('Queue is too small!');
+        }
+    }
+    dequeue() {
+        if (this.isEmpty()) {
+            throw new QueueError('Queue is Empty!');
+        }
+        const removed = this._sealed[this._front];
+        if (++this._front == this._size) {
+            this._front = 0;
+        }
+        return removed;
+    }
+}
+
+class Queue {
+    constructor() {
+        this._list = [];
+        this._end = 0;
+    }
+    isEmpty() {
+        return this._list.length == 0;
+    }
+    size() {
+        return this._list.length;
+    }
+    peek() {
+        return this._list[0];
+    }
+    enqueue(element) {
+        this._list[this._end] = element;
+        ++this._end;
+    }
+    dequeue() {
+        if (this.isEmpty()) {
+            throw new QueueError('Queue is Empty!');
+        }
+        const removed = this._list[0];
+        this._list.splice(0, 1);
+        --this._end;
+        return removed;
+    }
+}
+
 exports.DoublyLinkedList = DoublyLinkedList;
 exports.LinkedList = LinkedList;
+exports.Queue = Queue;
 exports.Stack = Stack$1;
+exports.StaticQueue = StaticQueue;
