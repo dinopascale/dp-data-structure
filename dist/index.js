@@ -2,6 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var lodashEs = require('lodash-es');
+
 // rome-ignore lint/js/noUnusedVariables
 class Node {
     constructor(data, next) {
@@ -534,7 +536,7 @@ function getNative(object, key) {
 }
 
 /* Built-in method references that are verified to be native. */
-var Map = getNative(root, 'Map');
+var Map$1 = getNative(root, 'Map');
 
 /* Built-in method references that are verified to be native. */
 var nativeCreate = getNative(Object, 'create');
@@ -670,7 +672,7 @@ function mapCacheClear() {
   this.size = 0;
   this.__data__ = {
     'hash': new Hash,
-    'map': new (Map || ListCache),
+    'map': new (Map$1 || ListCache),
     'string': new Hash
   };
 }
@@ -806,7 +808,7 @@ function stackSet(key, value) {
   var data = this.__data__;
   if (data instanceof ListCache) {
     var pairs = data.__data__;
-    if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
+    if (!Map$1 || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
       pairs.push([key, value]);
       this.size = ++data.size;
       return this;
@@ -1876,7 +1878,7 @@ var dataViewTag$2 = '[object DataView]';
 
 /** Used to detect maps, sets, and weakmaps. */
 var dataViewCtorString = toSource(DataView),
-    mapCtorString = toSource(Map),
+    mapCtorString = toSource(Map$1),
     promiseCtorString = toSource(Promise),
     setCtorString = toSource(Set),
     weakMapCtorString = toSource(WeakMap);
@@ -1892,7 +1894,7 @@ var getTag = baseGetTag;
 
 // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
 if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag$2) ||
-    (Map && getTag(new Map) != mapTag$2) ||
+    (Map$1 && getTag(new Map$1) != mapTag$2) ||
     (Promise && getTag(Promise.resolve()) != promiseTag) ||
     (Set && getTag(new Set) != setTag$2) ||
     (WeakMap && getTag(new WeakMap) != weakMapTag$1)) {
@@ -2579,8 +2581,363 @@ class Queue {
     }
 }
 
+/**
+ * a Javascript clone of Java's TreeSet
+ * - unique values
+ * - always sorted in ascending order
+ */
+class TreeSet {
+    constructor(comparator) {
+        this._list = [];
+        this._length = 0;
+        this._comparator = function (a, b) {
+            if (a < b)
+                return -1;
+            if (a > b)
+                return 1;
+            return 0;
+        };
+        if (comparator) {
+            this._comparator = comparator;
+        }
+    }
+    size() {
+        return this._list.length;
+    }
+    isEmpty() {
+        return this.size() === 0;
+    }
+    first() {
+        return this._list[0];
+    }
+    last() {
+        return this._list[this._length - 1];
+    }
+    removeLast() {
+        if (this.isEmpty()) {
+            throw new Error('List is empty!');
+        }
+        this._length--;
+        return this._list.splice(this._length, 1)[0];
+    }
+    removeFirst() {
+        if (this.isEmpty()) {
+            throw new Error('List is empty!');
+        }
+        this._length--;
+        return this._list.splice(0, 1)[0];
+    }
+    remove(obj) {
+        if (lodashEs.isEqual(this._list[0], obj)) {
+            this.removeFirst();
+            return true;
+        }
+        if (lodashEs.isEqual(this._list[this._length - 1], obj)) {
+            this.removeLast();
+            return true;
+        }
+        for (let i = 0; i < this._length - 1; i++) {
+            if (lodashEs.isEqual(obj, this._list[i])) {
+                this._list.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    }
+    add(obj, comparer) {
+        // first let see if value is already inserting
+        if (this.contains(obj, comparer)) {
+            throw new Error('Element already Present!');
+        }
+        let indexAt = this._binarySearch(obj);
+        if (indexAt < 0) {
+            indexAt = -(indexAt + 1);
+        }
+        this._list.splice(indexAt, 0, obj);
+        this._length++;
+    }
+    contains(obj, comparer) {
+        for (let i = 0; i < this._length - 1; i++) {
+            if (comparer ? comparer(this._list[i]) : lodashEs.isEqual(obj, this._list[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    clear() {
+        while (!this.isEmpty()) {
+            this.removeFirst();
+        }
+    }
+    [Symbol.iterator]() {
+        return this._list[Symbol.iterator]();
+    }
+    next() {
+        return this._list.values().next();
+    }
+    _binarySearch(obj) {
+        let low = 0;
+        let high = this.size() - 1;
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            let midValue = this._list[mid];
+            let comp = this._comparator(midValue, obj);
+            if (comp < 0) {
+                low = mid + 1;
+            }
+            else if (comp > 0) {
+                high = mid - 1;
+            }
+            else {
+                return mid;
+            }
+        }
+        return -(low + 1);
+    }
+}
+class IntTreeSet extends TreeSet {
+    constructor() {
+        super();
+    }
+}
+
+// type guards for priorityQueueNode
+function isComparable(c) {
+    return c.compareTo !== undefined;
+}
+function isString(c) {
+    return c.localeCompare !== undefined;
+}
+class PriorityQueue {
+    constructor(values) {
+        this.heapSize = 0;
+        this.heapCapacity = 0;
+        this.heap = null;
+        this.map = new Map();
+        if (!values) {
+            this.heap = Array(1);
+        }
+        else if (typeof values === 'number') {
+            this.heap = Array(values);
+        }
+        else {
+            /**
+             * heapify process O(n) for building heap
+             * starting from an array of comparable
+             * objects
+             */
+            this.heapSize = this.heapCapacity = values.length;
+            this.heap = Array(this.heapCapacity);
+            for (let i = 0; i < this.heapSize; i++) {
+                this.mapAdd(values[i], i);
+                this.heap[i] = values[i];
+            }
+            for (let i = Math.max(0, Math.floor((this.heapSize / 2) - 1)); i >= 0; i--) {
+                this.sink(i);
+            }
+        }
+    }
+    isEmpty() {
+        return this.heapSize === 0;
+    }
+    clear() {
+        for (let i = 0; i < this.heapCapacity; i++) {
+            this.heap[i] = null;
+        }
+        this.heapSize = 0;
+        this.map.clear();
+    }
+    size() {
+        return this.heapSize;
+    }
+    peek() {
+        if (this.isEmpty()) {
+            return null;
+        }
+        return this.heap[0];
+    }
+    // time complexity of O(log(n))
+    poll() {
+        return this.removeAt(0);
+    }
+    // test if elements is in heap, O(1)
+    contains(element) {
+        if (element == null) {
+            return false;
+        }
+        return this.map.has(element);
+    }
+    add(element) {
+        if (element == null) {
+            throw new Error('You cannot pass null as argument');
+        }
+        if (this.heapSize < this.heapCapacity) {
+            this.heap[this.heapSize] = element;
+        }
+        else {
+            this.heap.push(element);
+            this.heapCapacity++;
+        }
+        this.mapAdd(element, this.heapSize);
+        this.swim(this.heapSize);
+        this.heapSize++;
+    }
+    less(i, j) {
+        const node1 = this.heap[i];
+        const node2 = this.heap[j];
+        let sorter;
+        if (isComparable(node1)) {
+            sorter = node1.compareTo(node2);
+        }
+        else if (isString(node1) && isString(node2)) {
+            sorter = node1.localeCompare(node2);
+        }
+        else {
+            sorter = node1 - node2;
+        }
+        return sorter <= 0;
+    }
+    swim(k) {
+        let parent = Math.floor((k - 1) / 2);
+        while (k > 0 && this.less(k, parent)) {
+            // we need to swap position between node and parent in heap
+            // and we need to update position into map
+            this.swap(k, parent);
+            //update k and parent
+            k = parent;
+            parent = (k - 1) / 2;
+        }
+    }
+    sink(k) {
+        while (true) {
+            // get left child node
+            let left = (2 * k) + 1;
+            // get right child node
+            let right = (2 * k) + 2;
+            // just assume the smallest is left
+            let smallest = left;
+            // check if right node is smallest
+            if (right < this.heapSize && this.less(right, left)) {
+                smallest = right;
+            }
+            // let break the loop if we are out of boundary or next node is smallest of actual one
+            if (left >= this.heapSize || this.less(k, smallest)) {
+                break;
+            }
+            // continue to move down to the tree
+            this.swap(smallest, k);
+            k = smallest;
+        }
+    }
+    swap(i, j) {
+        let iValue = this.heap[i];
+        let jValue = this.heap[j];
+        this.heap[i] = jValue;
+        this.heap[j] = iValue;
+        this.mapSwap(iValue, jValue, i, j);
+    }
+    remove(element) {
+        if (element == null) {
+            return false;
+        }
+        const index = this.mapGet(element);
+        if (index != null)
+            this.removeAt(index);
+        return index != null;
+    }
+    removeAt(i) {
+        if (this.isEmpty()) {
+            return null;
+        }
+        this.heapSize--;
+        const removedData = this.heap[i];
+        this.swap(i, this.heapSize);
+        this.heap[this.heapSize] = null;
+        this.mapRemove(removedData, this.heapSize);
+        if (i == this.heapSize) {
+            return removedData;
+        }
+        let element = this.heap[i];
+        // we try sinking
+        this.sink(i);
+        if (lodashEs.isEqual(this.heap[i], element)) {
+            this.swim(i);
+        }
+        return removedData;
+    }
+    isMinHeap(k) {
+        if (k >= this.heapSize) {
+            return true;
+        }
+        let left = (2 * k) + 1;
+        let right = (2 * k) + 2;
+        if (left < this.heapSize && !this.less(k, left)) {
+            return false;
+        }
+        if (right < this.heapSize && !this.less(k, right)) {
+            return false;
+        }
+        return this.isMinHeap(left) && this.isMinHeap(right);
+    }
+    [Symbol.iterator]() {
+        return this.values();
+    }
+    *values() {
+        const cloned = this.clone();
+        for (let i = 0; i < this.heapSize; i++) {
+            yield cloned[i];
+        }
+    }
+    clone() {
+        return JSON.parse(JSON.stringify(this.heap));
+    }
+    mapAdd(value, index) {
+        let set = this.map.get(value);
+        if (set == null) {
+            set = new IntTreeSet();
+            set.add(index);
+            this.map.set(value, set);
+        }
+        else {
+            set.add(index);
+        }
+    }
+    mapRemove(value, index) {
+        let set = this.map.get(value);
+        set.remove(index);
+        if (set.size() === 0) {
+            this.map.delete(value);
+        }
+    }
+    /**
+     * return index of element in heap thanks to map
+     * if element appear more than one time in heap
+     * we return the highest index (arbitrary)
+     * @param value
+     */
+    mapGet(value) {
+        const set = this.map.get(value);
+        if (set != null) {
+            return set.last();
+        }
+        return null;
+    }
+    mapSwap(val1, val2, val1Index, val2Index) {
+        const set1 = this.map.get(val1);
+        const set2 = this.map.get(val2);
+        set1.remove(val1Index);
+        set2.remove(val2Index);
+        set1.add(val2Index);
+        set2.add(val1Index);
+    }
+    toString() {
+        return JSON.stringify(this.heap);
+    }
+}
+
 exports.DoublyLinkedList = DoublyLinkedList;
 exports.LinkedList = LinkedList;
+exports.PriorityQueue = PriorityQueue;
 exports.Queue = Queue;
 exports.Stack = Stack$1;
 exports.StaticQueue = StaticQueue;
