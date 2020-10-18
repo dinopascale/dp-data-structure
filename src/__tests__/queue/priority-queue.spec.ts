@@ -1,4 +1,5 @@
-import {Comparable, PriorityQueue} from '../../queue/_priorityQueue';
+import {PriorityQueue} from '../../queue/_priorityQueue';
+import {Comparable} from '../../shared/_comparable';
 
 interface data extends Comparable<data>{
     id: number;

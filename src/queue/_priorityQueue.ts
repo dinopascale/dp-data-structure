@@ -1,10 +1,6 @@
 import {IntTreeSet} from '../shared/_treeSet';
 import isEqual from "lodash-es/isEqual";
-
-// interface for not primitives that can be added to priority queue
-export interface Comparable<T> {
-    compareTo: (obj: T) => number;
-}
+import {Comparable} from '../shared/_comparable';
 
 type priorityQueueNode<T> = string | number | Comparable<T>;
 
